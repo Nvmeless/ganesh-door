@@ -1,6 +1,6 @@
-<phpunit >
+<phpunit bootstrap="vendor/autoload.php">
     <testsuites>
-        <testsuite>
+        <testsuite name="GaneshDoor Framework">
             <directory>Test</directory>
         </testsuite>
     </testsuites>
