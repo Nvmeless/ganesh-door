@@ -8,14 +8,20 @@ class Renderer
     const DEFAULT_NAMESPACE = '__DEFAULT_MAIN';
 
     /**
-     * Undocumented variable
+     * List of paths
      *
      * @var array
      */
     private $paths = [];
 
     /**
-     * Undocumented function
+     * Globales Variables that can be used by all the views
+     *
+     * @var array
+     */
+    private $globals = [];
+    /**
+     * Permit to add a path to load views
      *
      * @param string $namespace
      * @param string|null $path
@@ -30,12 +36,14 @@ class Renderer
         }
     }
     /**
-     * Undocumented function
-     *
+     * Permit to render a view
+     * The path can be precised by namespace via addPath
+     * $this->render('@blog/view');
+     * $this->render('view');
      * @param string $view
      * @return string
      */
-    public function render(string $view): string
+    public function render(string $view, array $params = []): string
     {
         if ($this->hasNamespace($view)) {
             $path = $this->replaceNamespace($view) . '.php';
@@ -43,8 +51,22 @@ class Renderer
             $path = $this->paths[self::DEFAULT_NAMESPACE] . DIRECTORY_SEPARATOR . $view . '.php';
         }
         ob_start();
+        $renderer = $this;
+        extract($this->globals);
+        extract($params);
         require($path);
         return ob_get_clean();
+    }
+    /**
+     * ermit to add Globals variables to all the views
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
+    public function addGlobal(string $key, $value): void
+    {
+        $this->globals[$key] = $value;
     }
     /**
      * Undocumented function
