@@ -32,6 +32,7 @@ class Router
      */
     public function get(string $path, callable $callable, string $name)
     {
+        //Rajouter une fonction qui slug automatiquement une string ex: "http://www.toto.com/salut-je-suis-supercontent('%20' === '-')2" > "http://www.toto.com/SalutJeSuisSupercontent 2" 
         $this->router->addRoute(new ZendRoute($path, $callable, ['GET'], $name));
     }
     /**
