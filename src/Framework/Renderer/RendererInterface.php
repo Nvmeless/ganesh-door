@@ -3,7 +3,7 @@
 namespace Framework\Renderer;
 
 interface RendererInterface
-{ 
+{
     /**
      * Permit to add a path to load views
      *
@@ -11,7 +11,7 @@ interface RendererInterface
      * @param string|null $path
      * @return void
      */
-    public function addPath(string $namespace, ?string $path = null):void;
+    public function addPath(string $namespace, ?string $path = null): void;
     /**
      * Permit to render a view
      * The path can be precised by namespace via addPath
@@ -20,7 +20,7 @@ interface RendererInterface
      * @param string $view
      * @return string
      */
-    public function render(string $view, array $params = []):string;
+    public function render(string $view, array $params = []): string;
     /**
      * ermit to add Globals variables to all the views
      *
@@ -28,6 +28,5 @@ interface RendererInterface
      * @param mixed $value
      * @return void
      */
-    public function addGlobal(string $key, $value):void;
-   
+    public function addGlobal(string $key, $value): void;
 }
