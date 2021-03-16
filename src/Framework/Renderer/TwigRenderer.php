@@ -1,25 +1,17 @@
 <?php
-class TwigRenderer implements RendererInterface{
 
-    const DEFAULT_NAMESPACE = '__DEFAULT_MAIN';
+namespace Framework\Renderer;
 
-    /**
-     * List of paths
-     *
-     * @var array
-     */
-    private $paths = [];
+class TwigRenderer implements RendererInterface
+{
 
-    /**
-     * Globales Variables that can be used by all the views
-     *
-     * @var array
-     */
-    private $globals = [];
+    private $twig;
+    private $loader;
 
-    function __construct(?string $defaultPath = null ){
-        $loader = new \Twig_Loader_Filesystem($path);
-        $twig = new \Twig_Environment($loader,[]);
+    public function __construct(string $path)
+    {
+        $this->loader = new \Twig_Loader_Filesystem($path);
+        $this->twig = new \Twig_Environment($this->loader, []);
     }
     /**
      * Permit to add a path to load views
@@ -30,7 +22,7 @@ class TwigRenderer implements RendererInterface{
      */
     public function addPath(string $namespace, ?string $path = null): void
     {
-
+        $this->loader->addPath($path, $namespace);
     }
     /**
      * Permit to render a view
@@ -42,7 +34,7 @@ class TwigRenderer implements RendererInterface{
      */
     public function render(string $view, array $params = []): string
     {
-
+        return $this->twig->render($view . '.twig', $params);
     }
     /**
      * ermit to add Globals variables to all the views
@@ -53,35 +45,6 @@ class TwigRenderer implements RendererInterface{
      */
     public function addGlobal(string $key, $value): void
     {
-
+        $this->twig->addGlobal($key, $value);
     }
-    /**
-     * Undocumented function
-     *
-     * @param string $view
-     * @return boolean
-     */
-    private function hasNamespace(string $view): bool
-    {
-    }
-    /**
-     * Undocumented function
-     *
-     * @param string $view
-     * @return string
-     */
-    private function getNamespace(string $view): string
-    {
-
-    }
-    /**
-     * Undocumented function
-     *
-     * @param string $view
-     * @return string
-     */
-    private function replaceNamespace(string $view): string
-    {
-
-    }
-?>
+}
