@@ -16,20 +16,15 @@ class App
      */
     private $modules = [];
 
-    /**
-     * Router
-     *
-     * @var Router
-     */
-    private $router;
-
-    /**
+     /**
      * Dependencies Container
      *
-     * @var [type]
+     * @var ContainerInterface
      */
     private $container;
 
+
+   
     /**
      * App Constructor
      *
@@ -52,7 +47,8 @@ class App
                 ->withStatus(301)
                 ->withHeader('Location', substr($uri, 0, -1));
         }
-        $route = $this->container->get(Router::class)->match($request);
+        $router = $this->container->get(Router::class);
+        $route = $router->match($request);
         if (is_null($route)) {
             return new Response(404, [], '<h1>Erreur 404</h1>');
         }
