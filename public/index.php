@@ -1,15 +1,19 @@
 <?php
 
-use App\Blog\BlogModule;
 
 require realpath(__DIR__ . '/../vendor/autoload.php');
 
-$renderer = new \Framework\Renderer\TwigRenderer(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Views');
+$builder = new \DI\ContainerBuilder();
+$builder->addDefinitions(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php');
+$builder->addDefinitions(dirname(__DIR__)  . DIRECTORY_SEPARATOR . 'config.php');
+$container = $builder->build();
 
-$app = new \Framework\App([
+$container->get(\Framework\Renderer\RendererInterface::class);
+
+
+
+$app = new \Framework\App($container, [
     \App\Blog\BlogModule::class
-], [
-    'renderer' => $renderer,
 ]);
 
 $response = $app->run(\GuzzleHttp\Psr7\ServerRequest::fromGlobals());
