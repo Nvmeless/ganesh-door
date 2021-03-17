@@ -1,40 +1,41 @@
 <?php
-
 namespace Framework\Router;
 
 /**
  * Class Route
- * Represent a matched Route
+ * Represent a matched route
  */
 class Route
 {
+
     /**
-     * Undocumented variable
-     *
      * @var string
      */
     private $name;
+
     /**
-     * Undocumented variable
-     *
      * @var callable
      */
-    private $callable;
+    private $callback;
+
     /**
-     * Undocumented variable
-     *
      * @var array
      */
     private $parameters;
 
-
-
-    public function __construct(string $name, callable $callable, array $parameters)
+    /**
+     * Route constructor.
+     * @param string $name
+     * @param string|callable $callback
+     * @param array $parameters
+     */
+    public function __construct(string $name, $callback, array $parameters)
     {
         $this->name = $name;
-        $this->callable = $callable;
+        $this->callback = $callback;
         $this->parameters = $parameters;
     }
+
     /**
      * @return string
      */
@@ -44,15 +45,16 @@ class Route
     }
 
     /**
-     * @return callable
+     * @return string|callable
      */
-    public function getCallback(): callable
+    public function getCallback()
     {
-        return $this->callable;
+        return $this->callback;
     }
 
     /**
-     * @return array
+     * Retrieve the URL parameters
+     * @return string[]
      */
     public function getParams(): array
     {

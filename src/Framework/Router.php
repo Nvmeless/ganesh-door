@@ -8,35 +8,31 @@ use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route as ZendRoute;
 
 /**
- * Register and match Routes
+ * Register and match routes
  */
 class Router
 {
     /**
-     * Undocumented variable
-     *
      * @var FastRouteRouter
      */
     private $router;
 
     public function __construct()
     {
-        $this->router =  new FastRouteRouter();
+        $this->router = new FastRouteRouter();
     }
+
     /**
-     * Undocumented function
-     *
      * @param string $path
-     * @param callable $callable
+     * @param string|callable $callable
      * @param string $name
      */
-    public function get(string $path, callable $callable, string $name)
+    public function get(string $path, $callable, string $name)
     {
         $this->router->addRoute(new ZendRoute($path, $callable, ['GET'], $name));
     }
+
     /**
-     * Undocumented function
-     *
      * @param ServerRequestInterface $request
      * @return Route|null
      */

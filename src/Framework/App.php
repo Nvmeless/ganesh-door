@@ -3,33 +3,29 @@
 namespace Framework;
 
 use GuzzleHttp\Psr7\Response;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class App
 {
+
     /**
-     * Undocumented variable
-     *
+     * List of modules
      * @var array
      */
     private $modules = [];
 
-     /**
-     * Dependencies Container
-     *
+    /**
+     * Container
      * @var ContainerInterface
      */
     private $container;
 
-
-   
     /**
-     * App Constructor
-     *
+     * App constructor.
      * @param ContainerInterface $container
-     * @param array $modules
+     * @param string[] $modules Liste des modules à charger
      */
     public function __construct(ContainerInterface $container, array $modules = [])
     {
@@ -56,12 +52,17 @@ class App
         $request = array_reduce(array_keys($params), function ($request, $key) use ($params) {
             return $request->withAttribute($key, $params[$key]);
         }, $request);
-        $response = call_user_func_array($route->getCallback(), [$request]);
+        $callback = $route->getCallback();
+        if (is_string($callback)) {
+            $callback = $this->container->get($callback);
+        }
+        $response = call_user_func_array($callback, [$request]);
         if (is_string($response)) {
             return new Response(200, [], $response);
         } elseif ($response instanceof ResponseInterface) {
             return $response;
+        } else {
+            throw new \Exception('The response is not a string or an instance of ResponseInterface');
         }
-        throw new \Exception('The response is not a string or an instance of ResponseInterface');
     }
 }

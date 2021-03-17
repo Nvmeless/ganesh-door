@@ -1,7 +1,8 @@
 <?php
 namespace Framework;
 
-class Module {
-    const DEFINITIONS = null;
+class Module
+{
 
+    const DEFINITIONS = null;
 }
