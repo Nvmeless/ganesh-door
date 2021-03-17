@@ -5,18 +5,12 @@ namespace Framework\Renderer;
 class PHPRenderer implements RendererInterface
 {
 
-    const DEFAULT_NAMESPACE = '__DEFAULT_MAIN';
+    const DEFAULT_NAMESPACE = '__MAIN';
 
-    /**
-     * List of paths
-     *
-     * @var array
-     */
     private $paths = [];
 
     /**
-     * Globales Variables that can be used by all the views
-     *
+     * Variables globalement accessibles pour toutes les vues
      * @var array
      */
     private $globals = [];
@@ -27,12 +21,11 @@ class PHPRenderer implements RendererInterface
             $this->addPath($defaultPath);
         }
     }
+
     /**
-     * Permit to add a path to load views
-     *
+     * Permet de rajouter un chamin pour charger les vues
      * @param string $namespace
-     * @param string|null $path
-     * @return void
+     * @param null|string $path
      */
     public function addPath(string $namespace, ?string $path = null): void
     {
@@ -42,12 +35,14 @@ class PHPRenderer implements RendererInterface
             $this->paths[$namespace] = $path;
         }
     }
+
     /**
-     * Permit to render a view
-     * The path can be precised by namespace via addPath
+     * Permet de rendre une vue
+     * Le chemin peut être précisé avec des namespace rajoutés via addPath()
      * $this->render('@blog/view');
      * $this->render('view');
      * @param string $view
+     * @param array $params
      * @return string
      */
     public function render(string $view, array $params = []): string
@@ -64,43 +59,28 @@ class PHPRenderer implements RendererInterface
         require($path);
         return ob_get_clean();
     }
+
     /**
-     * ermit to add Globals variables to all the views
+     * Permet de rajouter des variables globales à toutes les vues
      *
      * @param string $key
      * @param mixed $value
-     * @return void
      */
     public function addGlobal(string $key, $value): void
     {
         $this->globals[$key] = $value;
     }
-    /**
-     * Undocumented function
-     *
-     * @param string $view
-     * @return boolean
-     */
+
     private function hasNamespace(string $view): bool
     {
         return $view[0] === '@';
     }
-    /**
-     * Undocumented function
-     *
-     * @param string $view
-     * @return string
-     */
+
     private function getNamespace(string $view): string
     {
         return substr($view, 1, strpos($view, '/') - 1);
     }
-    /**
-     * Undocumented function
-     *
-     * @param string $view
-     * @return string
-     */
+
     private function replaceNamespace(string $view): string
     {
         $namespace = $this->getNamespace($view);
