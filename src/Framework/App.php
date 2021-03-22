@@ -2,6 +2,7 @@
 
 namespace Framework;
 
+use DI\Container;
 use GuzzleHttp\Psr7\Response;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -64,5 +65,14 @@ class App
         } else {
             throw new \Exception('The response is not a string or an instance of ResponseInterface');
         }
+    }
+    /**
+     * Undocumented function
+     *
+     * @return ContainerInterface
+     */
+    public function getContainer(): ContainerInterface
+    {
+        return $this->container;
     }
 }
