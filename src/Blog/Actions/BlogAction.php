@@ -2,10 +2,12 @@
 
 namespace App\Blog\Actions;
 
+use App\Blog\Table\PostTable;
 use Framework\Actions\RouterAwareAction;
 use Framework\Renderer\RendererInterface;
 use Framework\Router;
 use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class BlogAction
@@ -17,23 +19,21 @@ class BlogAction
     private $renderer;
 
     /**
-     *
-     * @var PDO
-     */
-    private $pdo;
-
-    /**
-     *
      * @var Router
      */
     private $router;
+    /**
+     * @var PostTable
+     */
+    private $postTable;
 
     use RouterAwareAction;
 
-    public function __construct(RendererInterface $renderer, \PDO $pdo, Router $router)
+    public function __construct(RendererInterface $renderer, Router $router, PostTable $postTable)
     {
-        $this->pdo = $pdo;
         $this->renderer = $renderer;
+        $this->router = $router;
+        $this->postTable = $postTable;
     }
 
     public function __invoke(Request $request)
@@ -41,34 +41,32 @@ class BlogAction
         if ($request->getAttribute('id')) {
             return $this->show($request);
         }
-        return $this->index();
+        return $this->index($request);
     }
 
-    public function index(): string
+    public function index(Request $request): string
     {
-        $posts = $this->pdo
-            ->query('SELECT * FROM posts ORDER BY created_at DESC LIMIT 10')
-            ->fetchAll();
-        return $this->renderer->render('@blog/index', ['posts' => $posts]);
+        $params = $request->getQueryParams();
+        $posts = $this->postTable->findPaginated(12, $params['p'] ?? 1);
+
+        return $this->renderer->render('@blog/index', compact('posts'));
     }
 
-    public function show(Request $request): string
+    /**
+     * Affiche un article
+     *
+     * @param Request $request
+     * @return ResponseInterface|string
+     */
+    public function show(Request $request)
     {
         $slug = $request->getAttribute('slug');
-        $query = $this->pdo
-            ->prepare('SELECT * FROM posts WHERE id = ?');
-        $query->execute([$request->getAttribute('id')]);
-        $post = $query->fetch();
-
+        $post = $this->postTable->find($request->getAttribute('id'));
         if ($post->slug !== $slug) {
-            $redirectUri = $this->router->generateUri('blog.show', [
+            return $this->redirect('blog.show', [
                 'slug' => $post->slug,
                 'id' => $post->id
             ]);
-
-            return (new Response())
-                ->withStatus(301)
-                ->withHeader('location', $redirectUri);
         }
         return $this->renderer->render('@blog/show', [
             'post' => $post
