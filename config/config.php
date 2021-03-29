@@ -12,7 +12,7 @@ use Framework\Twig\{
 return [
   'database.host' => 'localhost',
   'database.username' => 'jinn',
-  'database.password' => 'RoseBUD31420',
+  'database.password' => '**********',
   'database.name' => 'ganesh-door',
   'database.port' => '80',
   'database.charset' => 'utf8-bin',
