@@ -5,6 +5,7 @@ namespace Tests\App\Blog\Table;
 
 use App\Blog\Entity\Post;
 use App\Blog\Table\PostTable;
+use Framework\Database\NoRecordException;
 use Tests\DatabaseTestCase;
 
 class PostTableTest extends DatabaseTestCase
@@ -15,28 +16,30 @@ class PostTableTest extends DatabaseTestCase
      */
     private $postTable;
 
-    public function setUp():void
+    public function setUp(): void
     {
         parent::setUp();
-        $this->postTable = new PostTable($this->pdo);
+        $pdo = $this->getPDO();
+        $this->migrateDatabase($pdo);
+        $this->postTable = new PostTable($pdo);
     }
 
     public function testFind()
     {
-        $this->seedDatabase();
+        $this->seedDatabase($this->postTable->getPdo());
         $post = $this->postTable->find(1);
         $this->assertInstanceOf(Post::class, $post);
     }
 
     public function testFindNotFoundRecord()
     {
-        $post = $this->postTable->find(1);
-        $this->assertNull($post);
+        $this->expectException(NoRecordException::class);
+        $this->postTable->find(1);
     }
 
     public function testUpdate()
     {
-        $this->seedDatabase();
+        $this->seedDatabase($this->postTable->getPdo());
         $this->postTable->update(1, ['name' => 'Salut', 'slug' => 'demo']);
         $post = $this->postTable->find(1);
         $this->assertEquals('Salut', $post->name);
@@ -55,11 +58,10 @@ class PostTableTest extends DatabaseTestCase
     {
         $this->postTable->insert(['name' => 'Salut', 'slug' => 'demo']);
         $this->postTable->insert(['name' => 'Salut', 'slug' => 'demo']);
-        $count = $this->pdo->query('SELECT COUNT(id) FROM posts')->fetchColumn();
+        $count = $this->postTable->getPdo()->query('SELECT COUNT(id) FROM posts')->fetchColumn();
         $this->assertEquals(2, (int) $count);
-        $this->postTable->delete($this->pdo->lastInsertId());
-        $count = $this->pdo->query('SELECT COUNT(id) FROM posts')->fetchColumn();
+        $this->postTable->delete($this->postTable->getPdo()->lastInsertId());
+        $count = $this->postTable->getPdo()->query('SELECT COUNT(id) FROM posts')->fetchColumn();
         $this->assertEquals(1, (int)$count);
     }
-
 }

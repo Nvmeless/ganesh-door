@@ -1,8 +1,12 @@
 <?php
+
 namespace App\Blog;
 
-use App\Blog\Actions\AdminBlogAction;
-use App\Blog\Actions\BlogAction;
+use App\Blog\Actions\CategoryCrudAction;
+use App\Blog\Actions\CategoryShowAction;
+use App\Blog\Actions\PostCrudAction;
+use App\Blog\Actions\PostIndexAction;
+use App\Blog\Actions\PostShowAction;
 use Framework\Module;
 use Framework\Renderer\RendererInterface;
 use Framework\Router;
@@ -22,12 +26,14 @@ class BlogModule extends Module
         $blogPrefix = $container->get('blog.prefix');
         $container->get(RendererInterface::class)->addPath('blog', __DIR__ . '/Views');
         $router = $container->get(Router::class);
-        $router->get($container->get('blog.prefix'), BlogAction::class, 'blog.index');
-        $router->get("$blogPrefix/{slug:[a-z\-0-9]+}-{id:[0-9]+}", BlogAction::class, 'blog.show');
+        $router->get($container->get('blog.prefix'), PostIndexAction::class, 'blog.index');
+        $router->get("$blogPrefix/{slug:[a-z\-0-9]+}-{id:[0-9]+}", PostShowAction::class, 'blog.show');
+        $router->get("$blogPrefix/category/{slug:[a-z\-0-9]+}", CategoryShowAction::class, 'blog.category');
 
         if ($container->has('admin.prefix')) {
             $prefix = $container->get('admin.prefix');
-            $router->crud("$prefix/posts", AdminBlogAction::class, 'blog.admin');
+            $router->crud("$prefix/posts", PostCrudAction::class, 'blog.admin');
+            $router->crud("$prefix/categories", CategoryCrudAction::class, 'blog.category.admin');
         }
     }
 }
