@@ -8,6 +8,7 @@ use Framework\Session\PHPSession;
 use Framework\Session\SessionInterface;
 use Framework\Twig\{
   FlashExtension,
+  FormExtension,
   PagerFantaExtension,
   TextExtension,
   TimeExtension
@@ -15,18 +16,17 @@ use Framework\Twig\{
 
 return [
   'database.host' => 'localhost',
-  'database.username' => 'USERNAME',
+  'database.username' => '******',
   'database.password' => '******',
-  'database.name' => 'ganesh-door',
-  'database.port' => '80',
-  'database.charset' => 'utf8-bin',
+  'database.name' => 'ganesh_door',
   'views.path' => dirname(__DIR__) . '/Views',
   'twig.extensions' => [
     \DI\get(RouterTwigExtension::class),
     \DI\get(PagerFantaExtension::class),
     \DI\get(TextExtension::class),
     \DI\get(TimeExtension::class),
-    \DI\get(FlashExtension::class)
+    \DI\get(FlashExtension::class),
+    \DI\get(FormExtension::class)
   ],
   SessionInterface::class => \DI\object(PHPSession::class),
   Router::class => \DI\object(),
