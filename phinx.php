@@ -1,26 +1,25 @@
 <?php
 require 'public/index.php';
 
-$migration = [];
+$migrations = [];
 $seeds = [];
 foreach ($modules as $module) {
     if ($module::MIGRATIONS) {
         $migrations[] = $module::MIGRATIONS;
     }
-    if ($module::MIGRATIONS) {
+    if ($module::SEEDS) {
         $seeds[] = $module::SEEDS;
     }
 }
 
-
 return [
-    'paths' => [
+    'paths'        => [
         'migrations' => $migrations,
-        'seeds' => $seeds
+        'seeds'      => $seeds
     ],
     'environments' => [
         'default_database' => 'development',
-        'development' => [
+        'development'      => [
             'adapter' => 'mysql',
             'host' => $app->getContainer()->get('database.host'),
             'name' => $app->getContainer()->get('database.name'),
