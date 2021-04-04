@@ -6,5 +6,7 @@ use function \Di\get;
 
 return [
     'blog.prefix' => '/blog',
-    BlogModule::class => object()->constructorParameter('prefix', get('blog.prefix'))
+    'admin.widgets' => \DI\add([
+        get(\App\Blog\BlogWidget::class)
+    ])
 ];

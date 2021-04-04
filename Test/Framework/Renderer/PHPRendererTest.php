@@ -7,16 +7,12 @@ use PHPUnit\Framework\TestCase;
 
 class RendererTest extends TestCase
 {
-    /**
-     * Undocumented variable
-     *
-     * @var Renderer
-     */
+
     private $renderer;
 
     public function setUp(): void
     {
-        $this->renderer  = new Renderer\PHPRenderer(__DIR__ . '/Views');
+        $this->renderer = new Renderer\PHPRenderer(__DIR__ . '/Views');
     }
 
     public function testRenderTheRightPath()

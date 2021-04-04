@@ -2,7 +2,6 @@
 
 namespace Framework;
 
-use DI\Container;
 use GuzzleHttp\Psr7\Response;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -39,6 +38,12 @@ class App
     public function run(ServerRequestInterface $request): ResponseInterface
     {
         $uri = $request->getUri()->getPath();
+        $parsedBody = $request->getParsedBody();
+        if (array_key_exists('_method', $parsedBody) &&
+            in_array($parsedBody['_method'], ['DELETE', 'PUT'])
+        ) {
+            $request = $request->withMethod($parsedBody['_method']);
+        }
         if (!empty($uri) && $uri[-1] === "/") {
             return (new Response())
                 ->withStatus(301)
@@ -66,9 +71,8 @@ class App
             throw new \Exception('The response is not a string or an instance of ResponseInterface');
         }
     }
+
     /**
-     * Undocumented function
-     *
      * @return ContainerInterface
      */
     public function getContainer(): ContainerInterface
