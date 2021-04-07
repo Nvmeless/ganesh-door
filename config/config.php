@@ -16,8 +16,8 @@ use Framework\Twig\{
 
 return [
   'database.host' => 'localhost',
-  'database.username' => '******',
-  'database.password' => '******',
+  'database.username' => 'top-coach',
+  'database.password' => 'top-coach',
   'database.name' => 'ganesh_door',
   'views.path' => dirname(__DIR__) . '/Views',
   'twig.extensions' => [

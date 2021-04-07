@@ -8,18 +8,9 @@ $modules = [
     \App\Admin\AdminModule::class,
     \App\Blog\BlogModule::class
 ];
-
-$builder = new \DI\ContainerBuilder();
-$builder->addDefinitions(dirname(__DIR__) . '/config/config.php');
-foreach ($modules as $module) {
-    if ($module::DEFINITIONS) {
-        $builder->addDefinitions($module::DEFINITIONS);
-    }
-}
-$builder->addDefinitions(dirname(__DIR__) . '/config.php');
-$container = $builder->build();
-
-$app = new \Framework\App($container, $modules);
+$app = (new \Framework\App(dirname(__DIR__) . '/config/config.php'))
+    ->addModule(\App\Admin\AdminModule::class)
+    ->addModule(\App\Blog\BlogModule::class);
 
 if (php_sapi_name() !== "cli") {
     $response = $app->run(\GuzzleHttp\Psr7\ServerRequest::fromGlobals());

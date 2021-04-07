@@ -10,33 +10,43 @@ use Psr\Http\Message\ServerRequestInterface;
 class App
 {
 
+
     /**
      * List of modules
      * @var array
      */
     private $modules = [];
+    
+    
+    /**
+     * Paths des configs
+     *
+     * @var string
+     */
+    private $definition;
 
     /**
-     * Container
+     * Instance de Container Interface 
+     *
      * @var ContainerInterface
      */
-    private $container;
+    private $container; 
 
-    /**
-     * App constructor.
-     * @param ContainerInterface $container
-     * @param string[] $modules Liste des modules à charger
-     */
-    public function __construct(ContainerInterface $container, array $modules = [])
+    public function __construct(string $definition){
+        $this->definition =  $definition;
+    }
+
+    public function addModule(string $module) :self
     {
-        $this->container = $container;
-        foreach ($modules as $module) {
-            $this->modules[] = $container->get($module);
-        }
+        $this->modules[] = $module;
+        return $this;
     }
 
     public function run(ServerRequestInterface $request): ResponseInterface
     {
+        foreach($this->modules as $module ){
+            $this->getContainer()->get($module);// ICI 5:13
+        }
         $uri = $request->getUri()->getPath();
         $parsedBody = $request->getParsedBody();
         if (array_key_exists('_method', $parsedBody) &&
@@ -77,6 +87,16 @@ class App
      */
     public function getContainer(): ContainerInterface
     {
+        if ($this->container === null) {
+            $builder = new \DI\ContainerBuilder();
+            $builder->addDefinitions($this->definition);
+            foreach ($this->modules as $module) {
+                if ($module::DEFINITIONS) {
+                    $builder->addDefinitions($module::DEFINITIONS);
+                }
+            }
+            $this->container = $builder->build();
+        }
         return $this->container;
     }
 }
